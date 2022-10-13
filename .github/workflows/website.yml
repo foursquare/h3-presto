@@ -3,7 +3,7 @@ name: website
 on:
   push:
     branches:
-      - master
+      - main
 
 # This job installs dependencies, builds the website, and pushes it to `gh-pages`
 jobs:
