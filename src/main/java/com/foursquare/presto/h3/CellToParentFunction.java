@@ -21,6 +21,7 @@ import com.facebook.presto.spi.function.ScalarFunction;
 import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 
+/** Function wrapping {@link com.uber.h3core.H3Core#cellToParent(long, int)} */
 public final class CellToParentFunction {
   @ScalarFunction(value = "h3_cell_to_parent")
   @Description("Truncate H3 index to parent")

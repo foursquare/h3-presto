@@ -21,6 +21,7 @@ import com.facebook.presto.spi.function.ScalarFunction;
 import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 
+/** Function wrapping {@link com.uber.h3core.H3Core#latLngToCell(double, double, int)} */
 public final class LatLngToCellFunction {
   @ScalarFunction(value = "h3_latlng_to_cell")
   @Description("Convert degrees lat/lng to H3 index")
