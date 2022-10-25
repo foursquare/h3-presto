@@ -20,7 +20,7 @@ public final class CellToLatLngFunction {
   @Description("Convert H3 index to degrees lat/lng")
   @SqlNullable
   @SqlType("ARRAY(DOUBLE)")
-  public static Block latLngToCell(@SqlType(StandardTypes.BIGINT) long h3) {
+  public static Block cellToLatLng(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       LatLng latLng = H3Plugin.h3.cellToLatLng(h3);
       // TODO: It would be nice to return this as a ROW(lat DOUBLE, lng DOUBLE)
