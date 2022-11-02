@@ -33,6 +33,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class H3PluginTest {
+  public static final double EPSILON = 1e-6;
+
   @Test
   public void TestH3Plugin() {
     try (DistributedQueryRunner queryRunner = createQueryRunner()) {
@@ -51,11 +53,42 @@ public class H3PluginTest {
           rows.get(i).getFieldCount(),
           String.format("%s: row %d: expected number of columns", sql, i));
       for (int j = 0; j < expected.get(i).size(); j++) {
-        assertEquals(
-            expected.get(i).get(j),
-            rows.get(i).getField(j),
-            String.format("%s: row %d: column %d: value matches", sql, i, j));
+        Object expectedVal = expected.get(i).get(j);
+        Object actualVal = rows.get(i).getField(j);
+        compareFieldValues(
+            expectedVal, actualVal, String.format("%s: row %d: column %d", sql, i, j));
       }
+    }
+  }
+
+  private static void compareFieldValues(Object expectedVal, Object actualVal, String message) {
+    if (expectedVal instanceof Float && actualVal instanceof Float) {
+      assertEquals(
+          ((Float) expectedVal).floatValue(),
+          ((Float) actualVal).floatValue(),
+          EPSILON,
+          String.format("%s: value matches within epsilon", message));
+    } else if (expectedVal instanceof Double && actualVal instanceof Double) {
+      assertEquals(
+          ((Double) expectedVal).doubleValue(),
+          ((Double) actualVal).doubleValue(),
+          EPSILON,
+          String.format("%s: value matches within epsilon", message));
+    } else if (expectedVal instanceof List && actualVal instanceof List) {
+      List<?> expectedValList = (List<?>) expectedVal;
+      List<?> actualValList = (List<?>) actualVal;
+      assertEquals(
+          expectedValList.size(),
+          actualValList.size(),
+          String.format("%s: list lengths match", message));
+      for (int k = 0; k < expectedValList.size(); k++) {
+        compareFieldValues(
+            expectedValList.get(k),
+            actualValList.get(k),
+            String.format("%s: list item %d", message, k));
+      }
+    } else {
+      assertEquals(expectedVal, actualVal, String.format("%s: value matches", message));
     }
   }
 
