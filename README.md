@@ -55,7 +55,11 @@ mvn release:perform
 
 (As this library does not have native build steps, we plan to automate this in the future.)
 
-# Licensing
+# Legal and Licensing
 
-H3-Presto is licensed under the [Apache 2.0 License](./LICENSE).
-Copyright 2022 Foursquare Labs, Inc.
+Copyright 2022 Foursquare Labs, Inc. H3-Presto is licensed under the [Apache 2.0 License](./LICENSE).
+
+H3 Copyright 2016 Uber Technologies, Inc.
+
+DGGRID
+Copyright (c) 2015 Southern Oregon University
