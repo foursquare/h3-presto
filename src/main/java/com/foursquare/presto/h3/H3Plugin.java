@@ -15,10 +15,16 @@
  */
 package com.foursquare.presto.h3;
 
+import static com.facebook.presto.common.type.BigintType.BIGINT;
+
+import com.facebook.presto.common.block.Block;
+import com.facebook.presto.common.block.BlockBuilder;
 import com.facebook.presto.spi.Plugin;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.H3Core;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class H3Plugin implements Plugin {
@@ -44,10 +50,26 @@ public class H3Plugin implements Plugin {
     }
   }
 
+  static List<Long> longBlockToList(Block block) {
+    List<Long> list = new ArrayList<>(block.getPositionCount());
+    for (int i = 0; i < block.getPositionCount(); i++) {
+      list.add(block.getLong(i));
+    }
+    return list;
+  }
+
+  static Block longListToBlock(List<Long> list) {
+    BlockBuilder blockBuilder = BIGINT.createFixedSizeBlockBuilder(list.size());
+    for (Long cell : list) {
+      BIGINT.writeLong(blockBuilder, cell);
+    }
+    return blockBuilder.build();
+  }
+
   @Override
   public Set<Class<?>> getFunctions() {
     return ImmutableSet.<Class<?>>builder()
-        .add(LatLngToCellFunction.class, CellToLatLngFunction.class, CellToParentFunction.class)
+        .add(LatLngToCellFunction.class, CellToLatLngFunction.class, HierarchyFunctions.class)
         .build();
   }
 }
