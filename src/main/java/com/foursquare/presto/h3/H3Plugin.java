@@ -69,7 +69,7 @@ public class H3Plugin implements Plugin {
   @Override
   public Set<Class<?>> getFunctions() {
     return ImmutableSet.<Class<?>>builder()
-        .add(IndexingFunctions.class, HierarchyFunctions.class)
+        .add(IndexingFunctions.class, InspectionFunctions.class, HierarchyFunctions.class)
         .build();
   }
 }
