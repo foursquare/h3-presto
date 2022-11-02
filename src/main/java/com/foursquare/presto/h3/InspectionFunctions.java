@@ -67,35 +67,21 @@ public final class InspectionFunctions {
   @Description("Returns true if given a valid H3 cell identifier")
   @SqlType("BOOLEAN")
   public static boolean isValidCell(@SqlType(StandardTypes.BIGINT) long h3) {
-    try {
-      return H3Plugin.h3.isValidCell(h3);
-    } catch (Exception e) {
-      return false;
-    }
+    return H3Plugin.h3.isValidCell(h3);
   }
 
   @ScalarFunction(value = "h3_is_res_class_iii")
   @Description("Returns true if the index is in resolution class III")
-  @SqlNullable
   @SqlType("BOOLEAN")
-  public static Boolean isResClassIII(@SqlType(StandardTypes.BIGINT) long h3) {
-    try {
-      return H3Plugin.h3.isResClassIII(h3);
-    } catch (Exception e) {
-      return null;
-    }
+  public static boolean isResClassIII(@SqlType(StandardTypes.BIGINT) long h3) {
+    return H3Plugin.h3.isResClassIII(h3);
   }
 
   @ScalarFunction(value = "h3_is_pentagon")
   @Description("Returns true if the cell index is a pentagon")
-  @SqlNullable
   @SqlType("BOOLEAN")
-  public static Boolean isPentagon(@SqlType(StandardTypes.BIGINT) long h3) {
-    try {
-      return H3Plugin.h3.isPentagon(h3);
-    } catch (Exception e) {
-      return null;
-    }
+  public static boolean isPentagon(@SqlType(StandardTypes.BIGINT) long h3) {
+    return H3Plugin.h3.isPentagon(h3);
   }
 
   @ScalarFunction(value = "h3_get_icosahedron_faces")
