@@ -47,7 +47,7 @@ public class H3Plugin implements Plugin {
   @Override
   public Set<Class<?>> getFunctions() {
     return ImmutableSet.<Class<?>>builder()
-        .add(IndexingFunctions.class, CellToParentFunction.class)
+        .add(IndexingFunctions.class, CellToParentFunction.class, InspectionFunctions.class)
         .build();
   }
 }
