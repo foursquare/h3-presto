@@ -63,16 +63,16 @@ public final class IndexingFunctions {
   @SqlType("ARRAY(DOUBLE)")
   public static Block cellToBoundary(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
-      List<LatLng> latLng = H3Plugin.h3.cellToBoundary(h3);
+      List<LatLng> boundary = H3Plugin.h3.cellToBoundary(h3);
       // TODO: It would be nice to return this as a ARRAY(ROW(lat DOUBLE, lng DOUBLE))
       // but that is blocked on https://github.com/prestodb/presto/issues/18494
       // (determining how to build the Block to return)
 
-      BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(latLng.size() * 2);
-      for (int i = 0; i < latLng.size(); i++) {
-        LatLng ll = latLng.get(i);
-        DOUBLE.writeDouble(blockBuilder, ll.lat);
-        DOUBLE.writeDouble(blockBuilder, ll.lng);
+      BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(boundary.size() * 2);
+      for (int i = 0; i < boundary.size(); i++) {
+        LatLng latLng = boundary.get(i);
+        DOUBLE.writeDouble(blockBuilder, latLng.lat);
+        DOUBLE.writeDouble(blockBuilder, latLng.lng);
       }
 
       return blockBuilder.build();
