@@ -15,6 +15,11 @@
  */
 package com.foursquare.presto.h3;
 
+import static com.facebook.presto.geospatial.serde.JtsGeometrySerde.deserialize;
+import static com.facebook.presto.geospatial.serde.JtsGeometrySerde.serialize;
+import static com.facebook.presto.geospatial.type.GeometryType.GEOMETRY_TYPE_NAME;
+import static org.locationtech.jts.geom.Geometry.TYPENAME_POLYGON;
+
 import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;
@@ -22,59 +27,89 @@ import com.facebook.presto.spi.function.ScalarFunction;
 import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 import com.uber.h3core.util.LatLng;
+import io.airlift.slice.Slice;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 
-/**
- * Functions wrapping https://h3geo.org/docs/api/regions
- *
- * <p>TODO: This API is not very friendly
- */
+/** Functions wrapping https://h3geo.org/docs/api/regions */
 public final class RegionFunctions {
   @ScalarFunction(value = "h3_polygon_to_cells")
   @Description("Convert a polygon to H3 cells")
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block polygonToCells(
-      @SqlType("ARRAY(DOUBLE)") Block pointsBlock,
-      @SqlType("ARRAY(ARRAY(DOUBLE))") Block holesBlock,
-      @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(GEOMETRY_TYPE_NAME) Slice polygonSlice, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      List<LatLng> points = H3Plugin.latLngBlockToList(pointsBlock);
-      List<List<LatLng>> holes = H3Plugin.latLngArrayBlockToList(holesBlock);
-      List<Long> cells = H3Plugin.h3.polygonToCells(points, holes, H3Plugin.longToInt(res));
+      Geometry polygonGeomUntyped = deserialize(polygonSlice);
+      if (!TYPENAME_POLYGON.equals(polygonGeomUntyped.getGeometryType())) {
+        throw new IllegalArgumentException("Invalid polygon geometry");
+      }
+      Polygon polygonGeom = (Polygon) polygonGeomUntyped;
+      List<LatLng> polygon = linearRingTolatLngList(polygonGeom.getExteriorRing());
+
+      List<List<LatLng>> holes =
+          IntStream.range(0, polygonGeom.getNumInteriorRing())
+              .mapToObj(polygonGeom::getInteriorRingN)
+              .map(RegionFunctions::linearRingTolatLngList)
+              .collect(Collectors.toList());
+
+      List<Long> cells = H3Plugin.h3.polygonToCells(polygon, holes, H3Plugin.longToInt(res));
       return H3Plugin.longListToBlock(cells);
     } catch (Exception e) {
       return null;
     }
   }
 
-  // TODO: Unclear why this does not work
-  // @ScalarFunction(value = "h3_cells_to_multi_polygon")
-  // @Description("Find the multipolygon of the given cells")
-  // @SqlNullable
-  // @SqlType("ARRAY(ARRAY(ARRAY(DOUBLE)))")
-  // public static Block cellsToMultiPolygon(
-  //     @SqlType("ARRAY(BIGINT)") Block h3Block, @SqlType("BOOLEAN") boolean geojson) {
-  //   try {
-  //     List<Long> cells = H3Plugin.longBlockToList(h3Block);
-  //     List<List<List<LatLng>>> multiPolygon = H3Plugin.h3.cellsToMultiPolygon(cells, geojson);
+  static List<LatLng> linearRingTolatLngList(LinearRing ring) {
+    return Arrays.stream(ring.getCoordinates())
+        .map(c -> new LatLng(c.getY(), c.getX()))
+        .collect(Collectors.toList());
+  }
 
-  //     Type doubleArray = new ArrayType(DOUBLE);
-  //     Type doubleArrayArray = new ArrayType(doubleArray);
-  //     Type doubleArrayArrayArray = new ArrayType(doubleArrayArray);
-  //     BlockBuilder blockBuilder =
-  //         doubleArrayArrayArray.createBlockBuilder(null, multiPolygon.size());
-  //     for (List<List<LatLng>> polygon : multiPolygon) {
-  //       BlockBuilder blockBuilder2 = doubleArrayArray.createBlockBuilder(null, polygon.size());
-  //       for (List<LatLng> loop : polygon) {
-  //         doubleArray.writeObject(blockBuilder2, H3Plugin.latLngListToBlock(loop));
-  //       }
-  //       doubleArrayArray.writeObject(blockBuilder, blockBuilder2.build());
-  //     }
-  //     return blockBuilder.build();
-  //   } catch (Exception e) {
-  //     e.printStackTrace();
-  //     return null;
-  //   }
-  // }
+  @ScalarFunction(value = "h3_cells_to_multi_polygon")
+  @Description("Find the multipolygon of the given cells")
+  @SqlNullable
+  @SqlType(GEOMETRY_TYPE_NAME)
+  public static Slice cellsToMultiPolygon(@SqlType("ARRAY(BIGINT)") Block h3Block) {
+    try {
+      List<Long> cells = H3Plugin.longBlockToList(h3Block);
+      List<List<List<LatLng>>> multiPolygon = H3Plugin.h3.cellsToMultiPolygon(cells, true);
+
+      GeometryFactory geomFactory = new GeometryFactory();
+
+      Polygon[] polygons =
+          multiPolygon.stream()
+              .map(
+                  polygon ->
+                      geomFactory.createPolygon(
+                          latLngListToLinearRing(geomFactory, polygon.get(0)),
+                          polygon.subList(1, polygon.size()).stream()
+                              .map(ring -> latLngListToLinearRing(geomFactory, ring))
+                              .collect(Collectors.toList())
+                              .toArray(new LinearRing[0])))
+              .collect(Collectors.toList())
+              .toArray(new Polygon[multiPolygon.size()]);
+
+      MultiPolygon result = geomFactory.createMultiPolygon(polygons);
+      return serialize(result);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  static LinearRing latLngListToLinearRing(GeometryFactory geomFactory, List<LatLng> latLngs) {
+    return geomFactory.createLinearRing(
+        latLngs.stream()
+            .map(latLng -> new Coordinate(latLng.lng, latLng.lat))
+            .collect(Collectors.toList())
+            .toArray(new Coordinate[latLngs.size()]));
+  }
 }

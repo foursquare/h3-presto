@@ -78,6 +78,7 @@
     <assertj.version>3.22.0</assertj.version>
     <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
     <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version>
+    <guava.version>31.1-jre</guava.version>
   </properties>
 
   <dependencies>
@@ -90,7 +91,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>31.1-jre</version>
+      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
@@ -107,14 +108,14 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Test Dependencies -->
     <dependency>
       <groupId>com.facebook.presto</groupId>
       <artifactId>presto-main</artifactId>
       <version>${presto.version}</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
+    <!-- Test Dependencies -->
     <dependency>
       <groupId>com.facebook.presto</groupId>
       <artifactId>presto-tests</artifactId>
