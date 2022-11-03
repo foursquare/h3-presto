@@ -33,9 +33,9 @@ public final class TraversalFunctions {
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block gridDisk(
-      @SqlType(StandardTypes.BIGINT) long h3, @SqlType(StandardTypes.INTEGER) long k) {
+      @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
-      List<Long> disk = H3Plugin.h3.gridDisk(h3, H3Plugin.longToInt(k));
+      List<Long> disk = H3Plugin.h3.gridDisk(origin, H3Plugin.longToInt(k));
       return H3Plugin.longListToBlock(disk);
     } catch (Exception e) {
       return null;
@@ -46,14 +46,14 @@ public final class TraversalFunctions {
 
   @ScalarFunction(value = "h3_grid_disk_unsafe")
   @Description(
-      "Finds all nearby cells in a disk around the origin, optimized for not finding pentagons")
+      "Efficiently finds all nearby cells in a disk around the origin, but will return null if a pentagon is encountered")
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block gridDiskUnsafe(
-      @SqlType(StandardTypes.BIGINT) long h3, @SqlType(StandardTypes.INTEGER) long k) {
+      @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
       List<Long> disk =
-          H3Plugin.h3.gridDiskUnsafe(h3, H3Plugin.longToInt(k)).stream()
+          H3Plugin.h3.gridDiskUnsafe(origin, H3Plugin.longToInt(k)).stream()
               .flatMap(List::stream)
               .collect(Collectors.toList());
       return H3Plugin.longListToBlock(disk);
@@ -67,13 +67,13 @@ public final class TraversalFunctions {
 
   @ScalarFunction(value = "h3_grid_ring_unsafe")
   @Description(
-      "Finds nearby cells in a ring of distance k around the origin, optimized for not finding pentagons")
+      "Efficiently finds nearby cells in a ring of distance k around the origin, but will return null if a pentagon is encountered")
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block gridRingUnsafe(
-      @SqlType(StandardTypes.BIGINT) long h3, @SqlType(StandardTypes.INTEGER) long k) {
+      @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
-      List<Long> disk = H3Plugin.h3.gridRingUnsafe(h3, H3Plugin.longToInt(k));
+      List<Long> disk = H3Plugin.h3.gridRingUnsafe(origin, H3Plugin.longToInt(k));
       return H3Plugin.longListToBlock(disk);
     } catch (Exception e) {
       return null;

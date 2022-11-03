@@ -69,8 +69,8 @@ public class H3Plugin implements Plugin {
 
   static Block intListToBlock(List<Integer> list) {
     BlockBuilder blockBuilder = INTEGER.createFixedSizeBlockBuilder(list.size());
-    for (Integer i : list) {
-      INTEGER.writeLong(blockBuilder, i);
+    for (Integer val : list) {
+      INTEGER.writeLong(blockBuilder, val);
     }
     return blockBuilder.build();
   }
@@ -78,7 +78,11 @@ public class H3Plugin implements Plugin {
   @Override
   public Set<Class<?>> getFunctions() {
     return ImmutableSet.<Class<?>>builder()
-        .add(IndexingFunctions.class, InspectionFunctions.class, HierarchyFunctions.class, TraversalFunctions.class)
+        .add(
+            IndexingFunctions.class,
+            InspectionFunctions.class,
+            HierarchyFunctions.class,
+            TraversalFunctions.class)
         .build();
   }
 }
