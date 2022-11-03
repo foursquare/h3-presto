@@ -15,7 +15,6 @@
  */
 package com.foursquare.presto.h3;
 
-
 import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;

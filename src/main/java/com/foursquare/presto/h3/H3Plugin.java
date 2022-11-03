@@ -17,6 +17,7 @@ package com.foursquare.presto.h3;
 
 import static com.facebook.presto.common.type.BigintType.BIGINT;
 import static com.facebook.presto.common.type.DoubleType.DOUBLE;
+import static com.facebook.presto.common.type.IntegerType.INTEGER;
 
 import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.block.BlockBuilder;
@@ -41,8 +42,7 @@ public class H3Plugin implements Plugin {
   }
 
   /**
-   * Presto passes integer parameters in as `long`s in Java. These need to be cast
-   * down to `int` for
+   * Presto passes integer parameters in as `long`s in Java. These need to be cast down to `int` for
    * H3 functions. Throws if out of range.
    */
   static int longToInt(long l) {
@@ -97,10 +97,23 @@ public class H3Plugin implements Plugin {
     return blockBuilder.build();
   }
 
+  static Block intListToBlock(List<Integer> list) {
+    BlockBuilder blockBuilder = INTEGER.createFixedSizeBlockBuilder(list.size());
+    for (Integer val : list) {
+      INTEGER.writeLong(blockBuilder, val);
+    }
+    return blockBuilder.build();
+  }
+
   @Override
   public Set<Class<?>> getFunctions() {
     return ImmutableSet.<Class<?>>builder()
-        .add(IndexingFunctions.class, HierarchyFunctions.class, RegionFunctions.class)
+        .add(
+            IndexingFunctions.class,
+            InspectionFunctions.class,
+            HierarchyFunctions.class,
+            TraversalFunctions.class,
+            RegionFunctions.class)
         .build();
   }
 }
