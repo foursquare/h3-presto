@@ -67,15 +67,7 @@ public final class IndexingFunctions {
       // TODO: It would be nice to return this as a ARRAY(ROW(lat DOUBLE, lng DOUBLE))
       // but that is blocked on https://github.com/prestodb/presto/issues/18494
       // (determining how to build the Block to return)
-
-      BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(boundary.size() * 2);
-      for (int i = 0; i < boundary.size(); i++) {
-        LatLng latLng = boundary.get(i);
-        DOUBLE.writeDouble(blockBuilder, latLng.lat);
-        DOUBLE.writeDouble(blockBuilder, latLng.lng);
-      }
-
-      return blockBuilder.build();
+      return H3Plugin.latLngListToBlock(boundary);
     } catch (Exception e) {
       return null;
     }

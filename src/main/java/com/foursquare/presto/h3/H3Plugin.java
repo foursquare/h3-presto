@@ -16,6 +16,7 @@
 package com.foursquare.presto.h3;
 
 import static com.facebook.presto.common.type.BigintType.BIGINT;
+import static com.facebook.presto.common.type.DoubleType.DOUBLE;
 import static com.facebook.presto.common.type.IntegerType.INTEGER;
 
 import com.facebook.presto.common.block.Block;
@@ -23,6 +24,7 @@ import com.facebook.presto.common.block.BlockBuilder;
 import com.facebook.presto.spi.Plugin;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.H3Core;
+import com.uber.h3core.util.LatLng;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,15 @@ public class H3Plugin implements Plugin {
     return blockBuilder.build();
   }
 
+  static Block latLngListToBlock(List<LatLng> list) {
+    BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(list.size() * 2);
+    for (LatLng latLng : list) {
+      DOUBLE.writeDouble(blockBuilder, latLng.lat);
+      DOUBLE.writeDouble(blockBuilder, latLng.lng);
+    }
+    return blockBuilder.build();
+  }
+
   static Block intListToBlock(List<Integer> list) {
     BlockBuilder blockBuilder = INTEGER.createFixedSizeBlockBuilder(list.size());
     for (Integer val : list) {
@@ -82,7 +93,8 @@ public class H3Plugin implements Plugin {
             IndexingFunctions.class,
             InspectionFunctions.class,
             HierarchyFunctions.class,
-            TraversalFunctions.class)
+            TraversalFunctions.class,
+            RegionFunctions.class)
         .build();
   }
 }
