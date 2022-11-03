@@ -30,9 +30,9 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToParent(
-      @SqlType(StandardTypes.BIGINT) long h3, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      return H3Plugin.h3.cellToParent(h3, H3Plugin.longToInt(res));
+      return H3Plugin.h3.cellToParent(cell, H3Plugin.longToInt(res));
     } catch (Exception e) {
       return null;
     }
@@ -43,9 +43,9 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block cellToChildren(
-      @SqlType(StandardTypes.BIGINT) long h3, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      List<Long> children = H3Plugin.h3.cellToChildren(h3, H3Plugin.longToInt(res));
+      List<Long> children = H3Plugin.h3.cellToChildren(cell, H3Plugin.longToInt(res));
       return H3Plugin.longListToBlock(children);
     } catch (Exception e) {
       return null;
@@ -57,9 +57,9 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToCenterChild(
-      @SqlType(StandardTypes.BIGINT) long h3, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      return H3Plugin.h3.cellToCenterChild(h3, H3Plugin.longToInt(res));
+      return H3Plugin.h3.cellToCenterChild(cell, H3Plugin.longToInt(res));
     } catch (Exception e) {
       return null;
     }
@@ -69,10 +69,10 @@ public final class HierarchyFunctions {
   @Description("Compact indexes to coarser resolutions")
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
-  public static Block compactCells(@SqlType("ARRAY(BIGINT)") Block h3Block) {
+  public static Block compactCells(@SqlType("ARRAY(BIGINT)") Block cellsBlock) {
     try {
-      List<Long> h3 = H3Plugin.longBlockToList(h3Block);
-      List<Long> compacted = H3Plugin.h3.compactCells(h3);
+      List<Long> cells = H3Plugin.longBlockToList(cellsBlock);
+      List<Long> compacted = H3Plugin.h3.compactCells(cells);
       return H3Plugin.longListToBlock(compacted);
     } catch (Exception e) {
       return null;
@@ -84,10 +84,10 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block uncompactCells(
-      @SqlType("ARRAY(BIGINT)") Block h3Block, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType("ARRAY(BIGINT)") Block cellsBlock, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      List<Long> h3 = H3Plugin.longBlockToList(h3Block);
-      List<Long> uncompacted = H3Plugin.h3.uncompactCells(h3, H3Plugin.longToInt(res));
+      List<Long> cells = H3Plugin.longBlockToList(cellsBlock);
+      List<Long> uncompacted = H3Plugin.h3.uncompactCells(cells, H3Plugin.longToInt(res));
       return H3Plugin.longListToBlock(uncompacted);
     } catch (Exception e) {
       return null;
