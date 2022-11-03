@@ -32,49 +32,44 @@ public class RegionFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_polygon_to_cells(ARRAY [0, 0, 1, 1, 1,  0], ARRAY [], 4) hex",
+          "SELECT h3_polygon_to_cells(ST_GeometryFromText('POLYGON ((0 0, 1 1, 1 0, 0 0))'), 4) hex",
           ImmutableList.of(
               ImmutableList.of(
                   ImmutableList.of(
-                      596538805289222143L,
-                      596538856828829695L,
-                      596537920525959167L,
-                      596538839648960511L))));
+                      596538848238895103L,
+                      596538813879156735L,
+                      596538685030137855L,
+                      596538693620072447L))));
+      // TODO: Test with holes
 
       assertQueryResults(
           queryRunner,
-          "SELECT h3_polygon_to_cells(null, null, 4) hex",
+          "SELECT h3_polygon_to_cells(null, 4) hex",
           ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(
           queryRunner,
-          "SELECT h3_polygon_to_cells(ARRAY [0, 0, 1, 1, 2, 0], ARRAY [ARRAY [0, 0, 1, 1, 0, 1]], null) hex",
+          "SELECT h3_polygon_to_cells(ST_GeometryFromText('POLYGON ((0 0, 1 1, 1 0, 0 0))'), null) hex",
           ImmutableList.of(Collections.singletonList(null)));
     }
   }
 
-  // TODO
-  //   @Test
-  //   public void testCellsToMultiPolygon() {
-  //     try (QueryRunner queryRunner = createQueryRunner()) {
-  //       assertQueryResults(
-  //           queryRunner,
-  //           "SELECT h3_cells_to_multi_polygon(ARRAY [from_base('85283473fffffff', 16)], true)
-  // multipolygon",
-  //           ImmutableList.of(
-  //               ImmutableList.of(
-  //                   ImmutableList.of(
-  //                     // TODO
-  //                   ))));
-
-  //       assertQueryResults(
-  //           queryRunner,
-  //           "SELECT h3_cells_to_multi_polygon(null, true) multipolygon",
-  //           ImmutableList.of(Collections.singletonList(null)));
-  //       assertQueryResults(
-  //           queryRunner,
-  //           "SELECT h3_cells_to_multi_polygon(ARRAY [from_base('85283473fffffff', 16)], null)
-  // multipolygon",
-  //           ImmutableList.of(Collections.singletonList(null)));
-  //     }
-  //   }
+  @Test
+  public void testCellsToMultiPolygon() {
+    try (QueryRunner queryRunner = createQueryRunner()) {
+      assertQueryResults(
+          queryRunner,
+          "SELECT ST_AsText(h3_cells_to_multi_polygon(ARRAY [from_base('85283473fffffff', 16)])) multipolygon",
+          ImmutableList.of(
+              ImmutableList.of(
+                  "MULTIPOLYGON (((-121.92354999630156 37.42834118609436, -121.86222328902491 37.353926450852256, -121.91508032705622 37.2713558667319, -122.02910130918998 37.26319797461824, -122.090428929044 37.33755608435299, -122.03773496427027 37.42012867767779, -121.92354999630156 37.42834118609436)))")));
+      assertQueryResults(
+          queryRunner,
+          "SELECT h3_cells_to_multi_polygon(null) multipolygon",
+          ImmutableList.of(Collections.singletonList(null)));
+      assertQueryResults(
+          queryRunner,
+          "SELECT ST_AsText(h3_cells_to_multi_polygon(ARRAY [])) multipolygon",
+          ImmutableList.of(ImmutableList.of("MULTIPOLYGON EMPTY")));
+    }
+  }
 }
