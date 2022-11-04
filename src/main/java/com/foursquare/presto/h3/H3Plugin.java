@@ -94,7 +94,8 @@ public class H3Plugin implements Plugin {
             InspectionFunctions.class,
             HierarchyFunctions.class,
             TraversalFunctions.class,
-            RegionFunctions.class)
+            RegionFunctions.class,
+            MiscellaneousFunctions.class)
         .build();
   }
 }
