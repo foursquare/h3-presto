@@ -80,12 +80,16 @@ public class H3PluginTest {
       assertEquals(
           expectedValList.size(),
           actualValList.size(),
-          String.format("%s: list lengths match", message));
+          String.format(
+              "%s: list lengths match (expected: %s actual: %s)",
+              message, expectedValList.toString(), actualValList.toString()));
       for (int k = 0; k < expectedValList.size(); k++) {
         compareFieldValues(
             expectedValList.get(k),
             actualValList.get(k),
-            String.format("%s: list item %d", message, k));
+            String.format(
+                "%s: list item %d (expected: %s actual: %s)",
+                message, k, expectedValList.toString(), actualValList.toString()));
       }
     } else {
       assertEquals(expectedVal, actualVal, String.format("%s: value matches", message));
