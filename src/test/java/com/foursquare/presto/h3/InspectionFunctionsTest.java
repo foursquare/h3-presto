@@ -17,7 +17,7 @@ public class InspectionFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_get_resolution(599686042433355775)",
+          "SELECT h3_get_resolution(from_base('85283473fffffff', 16))",
           ImmutableList.of(ImmutableList.of(5)));
 
       assertQueryResults(
@@ -36,7 +36,7 @@ public class InspectionFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_get_base_cell_number(599686042433355775)",
+          "SELECT h3_get_base_cell_number(from_base('85283473fffffff', 16))",
           ImmutableList.of(ImmutableList.of(20)));
 
       assertQueryResults(
@@ -58,7 +58,7 @@ public class InspectionFunctionsTest {
       assertQueryResults(
           queryRunner,
           "SELECT h3_string_to_h3('85283473fffffff')",
-          ImmutableList.of(ImmutableList.of(599686042433355775L)));
+          ImmutableList.of(ImmutableList.of(0x85283473fffffffL)));
 
       assertQueryResults(
           queryRunner,
@@ -91,7 +91,7 @@ public class InspectionFunctionsTest {
           queryRunner, "SELECT h3_is_valid_cell(0)", ImmutableList.of(ImmutableList.of(false)));
       assertQueryResults(
           queryRunner,
-          "SELECT h3_is_valid_cell(599686042433355775)",
+          "SELECT h3_is_valid_cell(from_base('85283473fffffff', 16))",
           ImmutableList.of(ImmutableList.of(true)));
 
       assertQueryResults(
@@ -110,11 +110,11 @@ public class InspectionFunctionsTest {
           ImmutableList.of(ImmutableList.of(false, true)));
       assertQueryResults(
           queryRunner,
-          "SELECT h3_is_res_class_iii(599686042433355775)",
+          "SELECT h3_is_res_class_iii(from_base('85283473fffffff', 16))",
           ImmutableList.of(ImmutableList.of(true)));
       assertQueryResults(
           queryRunner,
-          "SELECT h3_is_res_class_iii(h3_cell_to_parent(599686042433355775, 4))",
+          "SELECT h3_is_res_class_iii(h3_cell_to_parent(from_base('85283473fffffff', 16), 4))",
           ImmutableList.of(ImmutableList.of(false)));
 
       assertQueryResults(
@@ -133,7 +133,7 @@ public class InspectionFunctionsTest {
           ImmutableList.of(ImmutableList.of(false, false)));
       assertQueryResults(
           queryRunner,
-          "SELECT h3_is_pentagon(576988517884755967), h3_is_pentagon(599686042433355775)",
+          "SELECT h3_is_pentagon(from_base('801dfffffffffff', 16)), h3_is_pentagon(from_base('85283473fffffff', 16))",
           ImmutableList.of(ImmutableList.of(true, false)));
 
       assertQueryResults(
@@ -148,7 +148,7 @@ public class InspectionFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_get_icosahedron_faces(576988517884755967), h3_get_icosahedron_faces(599686042433355775)",
+          "SELECT h3_get_icosahedron_faces(from_base('801dfffffffffff', 16)), h3_get_icosahedron_faces(from_base('85283473fffffff', 16))",
           ImmutableList.of(
               ImmutableList.of(ImmutableList.of(1, 6, 11, 7, 2), ImmutableList.of(7))));
 

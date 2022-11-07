@@ -18,7 +18,7 @@ public class IndexingFunctionsTest {
       assertQueryResults(
           queryRunner,
           "SELECT h3_latlng_to_cell(0,0,0) hex",
-          ImmutableList.of(ImmutableList.of(578536630256664575L)));
+          ImmutableList.of(ImmutableList.of(0x8075fffffffffffL)));
 
       assertQueryResults(
           queryRunner,
@@ -44,7 +44,7 @@ public class IndexingFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_cell_to_latlng(578536630256664575)",
+          "SELECT h3_cell_to_latlng(from_base('8075fffffffffff', 16))",
           ImmutableList.of(
               ImmutableList.of(ImmutableList.of(2.300882111626747, -5.245390296777327))));
 
@@ -64,7 +64,7 @@ public class IndexingFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_cell_to_boundary(578536630256664575)",
+          "SELECT h3_cell_to_boundary(from_base('8075fffffffffff', 16))",
           ImmutableList.of(
               ImmutableList.of(
                   ImmutableList.of(

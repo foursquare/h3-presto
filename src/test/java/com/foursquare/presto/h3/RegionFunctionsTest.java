@@ -36,10 +36,10 @@ public class RegionFunctionsTest {
           ImmutableList.of(
               ImmutableList.of(
                   ImmutableList.of(
-                      596538848238895103L,
-                      596538813879156735L,
-                      596538685030137855L,
-                      596538693620072447L))));
+                      0x84754ebffffffffL,
+                      0x84754e3ffffffffL,
+                      0x84754c5ffffffffL,
+                      0x84754c7ffffffffL))));
       // TODO: Test with holes
 
       assertQueryResults(
