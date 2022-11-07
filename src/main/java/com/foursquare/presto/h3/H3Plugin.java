@@ -105,6 +105,17 @@ public class H3Plugin implements Plugin {
     return blockBuilder.build();
   }
 
+  static Block latLngToBlock(LatLng latLng) {
+    // TODO: It would be nice to return this as a ROW(lat DOUBLE, lng DOUBLE)
+    // but that is blocked on https://github.com/prestodb/presto/issues/18494
+    // (determining how to build the Block to return)
+    // TODO: Or to return this directly as Geometry
+    BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(2);
+    DOUBLE.writeDouble(blockBuilder, latLng.lat);
+    DOUBLE.writeDouble(blockBuilder, latLng.lng);
+    return blockBuilder.build();
+  }
+
   @Override
   public Set<Class<?>> getFunctions() {
     return ImmutableSet.<Class<?>>builder()
@@ -114,7 +125,8 @@ public class H3Plugin implements Plugin {
             HierarchyFunctions.class,
             TraversalFunctions.class,
             RegionFunctions.class,
-            DirectedEdgeFunctions.class)
+            DirectedEdgeFunctions.class,
+            VertexFunctions.class)
         .build();
   }
 }
