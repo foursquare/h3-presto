@@ -36,6 +36,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
 public class H3Plugin implements Plugin {
+  static final String TYPE_ARRAY_BIGINT = "ARRAY(BIGINT)";
+  static final String TYPE_ARRAY_INTEGER = "ARRAY(INTEGER)";
+
   static final H3Core h3;
 
   static {
@@ -56,25 +59,6 @@ public class H3Plugin implements Plugin {
     } else {
       return (int) l;
     }
-  }
-
-  static List<LatLng> latLngBlockToList(Block block) {
-    if (block.getPositionCount() % 2 != 0) {
-      throw new IllegalArgumentException("Must have latitude,longitude coordinate pairs");
-    }
-    List<LatLng> list = new ArrayList<>(block.getPositionCount() / 2);
-    for (int i = 0; i < block.getPositionCount(); i += 2) {
-      list.add(new LatLng(DOUBLE.getDouble(block, i), DOUBLE.getDouble(block, i + 1)));
-    }
-    return list;
-  }
-
-  static List<List<LatLng>> latLngArrayBlockToList(Block block) {
-    List<List<LatLng>> list = new ArrayList<>(block.getPositionCount());
-    for (int i = 0; i < block.getPositionCount(); i++) {
-      list.add(latLngBlockToList(block.getBlock(i)));
-    }
-    return list;
   }
 
   static List<Long> longBlockToList(Block block) {

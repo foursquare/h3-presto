@@ -30,15 +30,9 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToParent(
-      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) Long resNullable) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      int res;
-      if (resNullable != null) {
-        res = H3Plugin.longToInt(resNullable);
-      } else {
-        res = H3Plugin.h3.getResolution(cell) - 1;
-      }
-      return H3Plugin.h3.cellToParent(cell, res);
+      return H3Plugin.h3.cellToParent(cell, H3Plugin.longToInt(res));
     } catch (Exception e) {
       return null;
     }
@@ -47,17 +41,11 @@ public final class HierarchyFunctions {
   @ScalarFunction(value = "h3_cell_to_children")
   @Description("Find children of an H3 index at given resolution")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block cellToChildren(
-      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) Long resNullable) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      int res;
-      if (resNullable != null) {
-        res = H3Plugin.longToInt(resNullable);
-      } else {
-        res = H3Plugin.h3.getResolution(cell) + 1;
-      }
-      List<Long> children = H3Plugin.h3.cellToChildren(cell, res);
+      List<Long> children = H3Plugin.h3.cellToChildren(cell, H3Plugin.longToInt(res));
       return H3Plugin.longListToBlock(children);
     } catch (Exception e) {
       return null;
@@ -69,15 +57,9 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToCenterChild(
-      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) Long resNullable) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
-      int res;
-      if (resNullable != null) {
-        res = H3Plugin.longToInt(resNullable);
-      } else {
-        res = H3Plugin.h3.getResolution(cell) + 1;
-      }
-      return H3Plugin.h3.cellToCenterChild(cell, res);
+      return H3Plugin.h3.cellToCenterChild(cell, H3Plugin.longToInt(res));
     } catch (Exception e) {
       return null;
     }
@@ -85,8 +67,9 @@ public final class HierarchyFunctions {
 
   @ScalarFunction(value = "h3_compact_cells")
   @Description("Compact indexes to coarser resolutions")
-  @SqlType("ARRAY(BIGINT)")
-  public static Block compactCells(@SqlType("ARRAY(BIGINT)") Block cellsBlock) {
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
+  public static Block compactCells(@SqlType(H3Plugin.TYPE_ARRAY_BIGINT) Block cellsBlock) {
     try {
       List<Long> cells = H3Plugin.longBlockToList(cellsBlock);
       List<Long> compacted = H3Plugin.h3.compactCells(cells);
@@ -98,9 +81,11 @@ public final class HierarchyFunctions {
 
   @ScalarFunction(value = "h3_uncompact_cells")
   @Description("Uncompact indexes to finer resolutions")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block uncompactCells(
-      @SqlType("ARRAY(BIGINT)") Block cellsBlock, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(H3Plugin.TYPE_ARRAY_BIGINT) Block cellsBlock,
+      @SqlType(StandardTypes.INTEGER) long res) {
     try {
       List<Long> cells = H3Plugin.longBlockToList(cellsBlock);
       List<Long> uncompacted = H3Plugin.h3.uncompactCells(cells, H3Plugin.longToInt(res));

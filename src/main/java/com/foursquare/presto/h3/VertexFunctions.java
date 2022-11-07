@@ -21,6 +21,7 @@ import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;
 import com.facebook.presto.spi.function.ScalarFunction;
+import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 import com.uber.h3core.util.LatLng;
 import io.airlift.slice.Slice;
@@ -30,6 +31,7 @@ import java.util.List;
 public final class VertexFunctions {
   @ScalarFunction(value = "h3_cell_to_vertex")
   @Description("Finds an index for the specified topological cell vertex")
+  @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToVertex(
       @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long vertexNum) {
@@ -42,7 +44,8 @@ public final class VertexFunctions {
 
   @ScalarFunction(value = "h3_cell_to_vertexes")
   @Description("Finds indexes for the topological vertexes of a cell")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block cellToVertexes(@SqlType(StandardTypes.BIGINT) long cell) {
     try {
       List<Long> vertexes = H3Plugin.h3.cellToVertexes(cell);
@@ -54,6 +57,7 @@ public final class VertexFunctions {
 
   @ScalarFunction(value = "h3_vertex_to_latlng")
   @Description("Finds coordinates of a topological vertex index")
+  @SqlNullable
   @SqlType(GEOMETRY_TYPE_NAME)
   public static Slice vertexToLatLng(@SqlType(StandardTypes.BIGINT) long vertex) {
     try {
@@ -67,7 +71,7 @@ public final class VertexFunctions {
   @ScalarFunction(value = "h3_is_valid_vertex")
   @Description("Returns true if this is a valid vertex index")
   @SqlType(StandardTypes.BOOLEAN)
-  public static boolean gridPathCells(@SqlType(StandardTypes.BIGINT) long vertex) {
+  public static boolean isValidVertex(@SqlType(StandardTypes.BIGINT) long vertex) {
     return H3Plugin.h3.isValidVertex(vertex);
   }
 }

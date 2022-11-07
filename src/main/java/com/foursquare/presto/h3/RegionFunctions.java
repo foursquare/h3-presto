@@ -24,6 +24,7 @@ import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;
 import com.facebook.presto.spi.function.ScalarFunction;
+import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 import com.uber.h3core.util.LatLng;
 import io.airlift.slice.Slice;
@@ -42,7 +43,8 @@ import org.locationtech.jts.geom.Polygon;
 public final class RegionFunctions {
   @ScalarFunction(value = "h3_polygon_to_cells")
   @Description("Convert a polygon to H3 cells")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block polygonToCells(
       @SqlType(GEOMETRY_TYPE_NAME) Slice polygonSlice, @SqlType(StandardTypes.INTEGER) long res) {
     try {
@@ -74,8 +76,9 @@ public final class RegionFunctions {
 
   @ScalarFunction(value = "h3_cells_to_multi_polygon")
   @Description("Find the multipolygon of the given cells")
+  @SqlNullable
   @SqlType(GEOMETRY_TYPE_NAME)
-  public static Slice cellsToMultiPolygon(@SqlType("ARRAY(BIGINT)") Block h3Block) {
+  public static Slice cellsToMultiPolygon(@SqlType(H3Plugin.TYPE_ARRAY_BIGINT) Block h3Block) {
     try {
       List<Long> cells = H3Plugin.longBlockToList(h3Block);
       List<List<List<LatLng>>> multiPolygon = H3Plugin.h3.cellsToMultiPolygon(cells, true);

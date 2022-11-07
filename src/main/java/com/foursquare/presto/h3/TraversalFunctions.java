@@ -19,6 +19,7 @@ import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;
 import com.facebook.presto.spi.function.ScalarFunction;
+import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 import com.google.common.collect.ImmutableList;
 import com.uber.h3core.util.CoordIJ;
@@ -29,7 +30,8 @@ import java.util.stream.Collectors;
 public final class TraversalFunctions {
   @ScalarFunction(value = "h3_grid_disk")
   @Description("Finds all nearby cells in a disk around the origin")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridDisk(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
@@ -45,7 +47,8 @@ public final class TraversalFunctions {
   @ScalarFunction(value = "h3_grid_disk_unsafe")
   @Description(
       "Efficiently finds all nearby cells in a disk around the origin, but will return null if a pentagon is encountered")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridDiskUnsafe(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
@@ -65,7 +68,8 @@ public final class TraversalFunctions {
   @ScalarFunction(value = "h3_grid_ring_unsafe")
   @Description(
       "Efficiently finds nearby cells in a ring of distance k around the origin, but will return null if a pentagon is encountered")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridRingUnsafe(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
@@ -78,7 +82,8 @@ public final class TraversalFunctions {
 
   @ScalarFunction(value = "h3_grid_path_cells")
   @Description("Finds cells comprising a path between origin and destination, in order")
-  @SqlType("ARRAY(BIGINT)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridPathCells(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.BIGINT) long destination) {
     try {
@@ -91,6 +96,7 @@ public final class TraversalFunctions {
 
   @ScalarFunction(value = "h3_grid_distance")
   @Description("Finds distance in grid cells between origin and destination")
+  @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long gridDistance(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.BIGINT) long destination) {
@@ -103,7 +109,8 @@ public final class TraversalFunctions {
 
   @ScalarFunction(value = "h3_cell_to_local_ij")
   @Description("Finds local IJ coordinates for a cell")
-  @SqlType("ARRAY(INTEGER)")
+  @SqlNullable
+  @SqlType(H3Plugin.TYPE_ARRAY_INTEGER)
   public static Block cellToLocalIj(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.BIGINT) long cell) {
     try {
@@ -117,6 +124,7 @@ public final class TraversalFunctions {
 
   @ScalarFunction(value = "h3_local_ij_to_cell")
   @Description("Finds cell given local IJ coordinates")
+  @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long localIjToCell(
       @SqlType(StandardTypes.BIGINT) long origin,
