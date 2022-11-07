@@ -32,8 +32,13 @@ public class DirectedEdgeFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_are_neighbor_cells(from_base('85283473fffffff', 16), from_base('8528347bfffffff', 16)), h3_are_neighbor_cells(from_base('85283473fffffff', 16), from_base('852836b7fffffff', 16))",
-          ImmutableList.of(ImmutableList.of(true, false)));
+          "SELECT h3_are_neighbor_cells(from_base('85283473fffffff', 16), from_base('8528347bfffffff', 16))",
+          ImmutableList.of(ImmutableList.of(true)));
+      // Non-neighbors
+      assertQueryResults(
+          queryRunner,
+          "SELECT h3_are_neighbor_cells(from_base('85283473fffffff', 16), from_base('852836b7fffffff', 16))",
+          ImmutableList.of(ImmutableList.of(false)));
 
       assertQueryResults(
           queryRunner,
@@ -60,7 +65,7 @@ public class DirectedEdgeFunctionsTest {
       assertQueryResults(
           queryRunner,
           "SELECT h3_cells_to_directed_edge(from_base('85283473fffffff', 16), from_base('8528347bfffffff', 16))",
-          ImmutableList.of(ImmutableList.of(1320261982812635135L)));
+          ImmutableList.of(ImmutableList.of(0x125283473fffffffL)));
 
       assertQueryResults(
           queryRunner,
@@ -74,6 +79,7 @@ public class DirectedEdgeFunctionsTest {
           queryRunner,
           "SELECT h3_cells_to_directed_edge(from_base('85283473fffffff', 16), null) hex",
           ImmutableList.of(Collections.singletonList(null)));
+      // Non-neighboring cells return an error
       assertQueryResults(
           queryRunner,
           "SELECT h3_cells_to_directed_edge(from_base('85283473fffffff', 16), from_base('852836b7fffffff', 16)) hex",
@@ -148,12 +154,12 @@ public class DirectedEdgeFunctionsTest {
           ImmutableList.of(
               ImmutableList.of(
                   ImmutableList.of(
-                      1248204388774707199L,
-                      1320261982812635135L,
-                      1392319576850563071L,
-                      1464377170888491007L,
-                      1536434764926418943L,
-                      1608492358964346879L))));
+                      0x115283473fffffffL,
+                      0x125283473fffffffL,
+                      0x135283473fffffffL,
+                      0x145283473fffffffL,
+                      0x155283473fffffffL,
+                      0x165283473fffffffL))));
 
       assertQueryResults(
           queryRunner,
@@ -161,12 +167,12 @@ public class DirectedEdgeFunctionsTest {
           ImmutableList.of(
               ImmutableList.of(
                   ImmutableList.of(
-                      1224979098644774912L,
-                      1297036692682702848L,
-                      1369094286720630784L,
-                      1441151880758558720L,
-                      1513209474796486656L,
-                      1585267068834414592L))));
+                      0x1100000000000000L,
+                      0x1200000000000000L,
+                      0x1300000000000000L,
+                      0x1400000000000000L,
+                      0x1500000000000000L,
+                      0x1600000000000000L))));
       assertQueryResults(
           queryRunner,
           "SELECT h3_origin_to_directed_edges(null)",
