@@ -106,7 +106,8 @@ public class H3Plugin implements Plugin {
             HierarchyFunctions.class,
             TraversalFunctions.class,
             RegionFunctions.class,
-            VertexFunctions.class)
+            VertexFunctions.class,
+            MiscellaneousFunctions.class)
         .build();
   }
 }
