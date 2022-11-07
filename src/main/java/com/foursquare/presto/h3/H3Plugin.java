@@ -126,7 +126,8 @@ public class H3Plugin implements Plugin {
             TraversalFunctions.class,
             RegionFunctions.class,
             DirectedEdgeFunctions.class,
-            VertexFunctions.class)
+            VertexFunctions.class,
+            MiscellaneousFunctions.class)
         .build();
   }
 }
