@@ -16,19 +16,24 @@
 package com.foursquare.presto.h3;
 
 import static com.facebook.presto.common.type.BigintType.BIGINT;
-import static com.facebook.presto.common.type.DoubleType.DOUBLE;
 import static com.facebook.presto.common.type.IntegerType.INTEGER;
+import static com.facebook.presto.geospatial.serde.JtsGeometrySerde.serialize;
 
 import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.block.BlockBuilder;
+import com.facebook.presto.geospatial.GeometryType;
 import com.facebook.presto.spi.Plugin;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.H3Core;
 import com.uber.h3core.util.LatLng;
+import io.airlift.slice.Slice;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 
 public class H3Plugin implements Plugin {
   static final H3Core h3;
@@ -69,13 +74,17 @@ public class H3Plugin implements Plugin {
     return blockBuilder.build();
   }
 
-  static Block latLngListToBlock(List<LatLng> list) {
-    BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(list.size() * 2);
-    for (LatLng latLng : list) {
-      DOUBLE.writeDouble(blockBuilder, latLng.lat);
-      DOUBLE.writeDouble(blockBuilder, latLng.lng);
+  static Slice latLngListToGeometry(List<LatLng> list, GeometryType type) {
+    Coordinate[] coordinates =
+        list.stream().map(ll -> new Coordinate(ll.lng, ll.lat)).toArray(Coordinate[]::new);
+    GeometryFactory geomFactory = new GeometryFactory();
+    if (GeometryType.LINE_STRING.equals(type)) {
+      return serialize(geomFactory.createLineString(coordinates));
+    } else if (GeometryType.POLYGON.equals(type)) {
+      return serialize(geomFactory.createPolygon(coordinates));
+    } else {
+      throw new IllegalArgumentException("Cannot serialize with GeometryType " + type);
     }
-    return blockBuilder.build();
   }
 
   static Block intListToBlock(List<Integer> list) {
@@ -86,15 +95,10 @@ public class H3Plugin implements Plugin {
     return blockBuilder.build();
   }
 
-  static Block latLngToBlock(LatLng latLng) {
-    // TODO: It would be nice to return this as a ROW(lat DOUBLE, lng DOUBLE)
-    // but that is blocked on https://github.com/prestodb/presto/issues/18494
-    // (determining how to build the Block to return)
-    // TODO: Or to return this directly as Geometry
-    BlockBuilder blockBuilder = DOUBLE.createFixedSizeBlockBuilder(2);
-    DOUBLE.writeDouble(blockBuilder, latLng.lat);
-    DOUBLE.writeDouble(blockBuilder, latLng.lng);
-    return blockBuilder.build();
+  static Slice latLngToGeometry(LatLng latLng) {
+    GeometryFactory geomFactory = new GeometryFactory();
+    Point point = geomFactory.createPoint(new Coordinate(latLng.lng, latLng.lat));
+    return serialize(point);
   }
 
   @Override

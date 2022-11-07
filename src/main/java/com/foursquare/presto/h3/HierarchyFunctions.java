@@ -30,9 +30,15 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToParent(
-      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) Long resNullable) {
     try {
-      return H3Plugin.h3.cellToParent(cell, H3Plugin.longToInt(res));
+      int res;
+      if (resNullable != null) {
+        res = H3Plugin.longToInt(resNullable);
+      } else {
+        res = H3Plugin.h3.getResolution(cell) - 1;
+      }
+      return H3Plugin.h3.cellToParent(cell, res);
     } catch (Exception e) {
       return null;
     }
@@ -43,9 +49,15 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block cellToChildren(
-      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) Long resNullable) {
     try {
-      List<Long> children = H3Plugin.h3.cellToChildren(cell, H3Plugin.longToInt(res));
+      int res;
+      if (resNullable != null) {
+        res = H3Plugin.longToInt(resNullable);
+      } else {
+        res = H3Plugin.h3.getResolution(cell) + 1;
+      }
+      List<Long> children = H3Plugin.h3.cellToChildren(cell, res);
       return H3Plugin.longListToBlock(children);
     } catch (Exception e) {
       return null;
@@ -57,9 +69,15 @@ public final class HierarchyFunctions {
   @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToCenterChild(
-      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) Long resNullable) {
     try {
-      return H3Plugin.h3.cellToCenterChild(cell, H3Plugin.longToInt(res));
+      int res;
+      if (resNullable != null) {
+        res = H3Plugin.longToInt(resNullable);
+      } else {
+        res = H3Plugin.h3.getResolution(cell) + 1;
+      }
+      return H3Plugin.h3.cellToCenterChild(cell, res);
     } catch (Exception e) {
       return null;
     }
@@ -67,7 +85,6 @@ public final class HierarchyFunctions {
 
   @ScalarFunction(value = "h3_compact_cells")
   @Description("Compact indexes to coarser resolutions")
-  @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block compactCells(@SqlType("ARRAY(BIGINT)") Block cellsBlock) {
     try {
@@ -81,7 +98,6 @@ public final class HierarchyFunctions {
 
   @ScalarFunction(value = "h3_uncompact_cells")
   @Description("Uncompact indexes to finer resolutions")
-  @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block uncompactCells(
       @SqlType("ARRAY(BIGINT)") Block cellsBlock, @SqlType(StandardTypes.INTEGER) long res) {

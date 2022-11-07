@@ -7,7 +7,6 @@ import com.facebook.presto.common.block.BlockBuilder;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;
 import com.facebook.presto.spi.function.ScalarFunction;
-import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 import io.airlift.slice.Slice;
 import io.airlift.slice.Slices;
@@ -17,7 +16,6 @@ import java.util.Collection;
 public final class InspectionFunctions {
   @ScalarFunction(value = "h3_get_resolution")
   @Description("Convert H3 index to resolution (0-15)")
-  @SqlNullable
   @SqlType("INTEGER")
   public static Long getResolution(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
@@ -29,7 +27,6 @@ public final class InspectionFunctions {
 
   @ScalarFunction(value = "h3_get_base_cell_number")
   @Description("Convert H3 index to base cell number (0-122)")
-  @SqlNullable
   @SqlType("INTEGER")
   public static Long getBaseCellNumber(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
@@ -41,7 +38,6 @@ public final class InspectionFunctions {
 
   @ScalarFunction(value = "h3_string_to_h3")
   @Description("Convert H3 index string to integer form")
-  @SqlNullable
   @SqlType("BIGINT")
   public static Long stringToH3(@SqlType(StandardTypes.VARCHAR) Slice h3) {
     try {
@@ -53,7 +49,6 @@ public final class InspectionFunctions {
 
   @ScalarFunction(value = "h3_h3_to_string")
   @Description("Convert H3 index integer to string form")
-  @SqlNullable
   @SqlType("VARCHAR")
   public static Slice h3ToString(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
@@ -86,7 +81,6 @@ public final class InspectionFunctions {
 
   @ScalarFunction(value = "h3_get_icosahedron_faces")
   @Description("Convert H3 index to icosahedron face IDs")
-  @SqlNullable
   @SqlType("ARRAY(INTEGER)")
   public static Block getIcosahedronFaces(@SqlType(StandardTypes.BIGINT) long h3) {
     try {

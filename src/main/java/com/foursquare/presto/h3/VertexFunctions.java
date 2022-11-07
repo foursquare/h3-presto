@@ -15,20 +15,21 @@
  */
 package com.foursquare.presto.h3;
 
+import static com.facebook.presto.geospatial.type.GeometryType.GEOMETRY_TYPE_NAME;
+
 import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
 import com.facebook.presto.spi.function.Description;
 import com.facebook.presto.spi.function.ScalarFunction;
-import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
 import com.uber.h3core.util.LatLng;
+import io.airlift.slice.Slice;
 import java.util.List;
 
 /** Wraps https://h3geo.org/docs/api/vertex */
 public final class VertexFunctions {
   @ScalarFunction(value = "h3_cell_to_vertex")
   @Description("Finds an index for the specified topological cell vertex")
-  @SqlNullable
   @SqlType(StandardTypes.BIGINT)
   public static Long cellToVertex(
       @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long vertexNum) {
@@ -41,7 +42,6 @@ public final class VertexFunctions {
 
   @ScalarFunction(value = "h3_cell_to_vertexes")
   @Description("Finds indexes for the topological vertexes of a cell")
-  @SqlNullable
   @SqlType("ARRAY(BIGINT)")
   public static Block cellToVertexes(@SqlType(StandardTypes.BIGINT) long cell) {
     try {
@@ -54,12 +54,11 @@ public final class VertexFunctions {
 
   @ScalarFunction(value = "h3_vertex_to_latlng")
   @Description("Finds coordinates of a topological vertex index")
-  @SqlNullable
-  @SqlType("ARRAY(DOUBLE)")
-  public static Block vertexToLatLng(@SqlType(StandardTypes.BIGINT) long vertex) {
+  @SqlType(GEOMETRY_TYPE_NAME)
+  public static Slice vertexToLatLng(@SqlType(StandardTypes.BIGINT) long vertex) {
     try {
       LatLng latLng = H3Plugin.h3.vertexToLatLng(vertex);
-      return H3Plugin.latLngToBlock(latLng);
+      return H3Plugin.latLngToGeometry(latLng);
     } catch (Exception e) {
       return null;
     }
