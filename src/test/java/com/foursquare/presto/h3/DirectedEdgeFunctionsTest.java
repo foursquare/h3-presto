@@ -24,6 +24,10 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class DirectedEdgeFunctionsTest {
@@ -181,14 +185,17 @@ public class DirectedEdgeFunctionsTest {
   }
 
   @Test
-  public void testDirectedEdgeToBoundary() {
+  public void testDirectedEdgeToBoundary() throws ParseException {
     try (QueryRunner queryRunner = createQueryRunner()) {
+      GeometryFactory geometryFactory = new GeometryFactory();
+      WKTReader wktReader = new WKTReader(geometryFactory);
+      Geometry expectedLineString =
+          wktReader.read(
+              "LINESTRING (-121.86222328902491 37.353926450852256, -121.92354999630156 37.42834118609436)");
       assertQueryResults(
           queryRunner,
           "SELECT ST_AsText(h3_directed_edge_to_boundary(h3_cells_to_directed_edge(from_base('85283473fffffff', 16), from_base('8528347bfffffff', 16))))",
-          ImmutableList.of(
-              ImmutableList.of(
-                  "LINESTRING (-121.86222328902491 37.353926450852256, -121.92354999630156 37.42834118609436)")));
+          ImmutableList.of(ImmutableList.of(expectedLineString)));
 
       assertQueryResults(
           queryRunner,

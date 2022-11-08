@@ -24,6 +24,10 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class RegionFunctionsTest {
@@ -54,14 +58,17 @@ public class RegionFunctionsTest {
   }
 
   @Test
-  public void testCellsToMultiPolygon() {
+  public void testCellsToMultiPolygon() throws ParseException {
     try (QueryRunner queryRunner = createQueryRunner()) {
+      GeometryFactory geometryFactory = new GeometryFactory();
+      WKTReader wktReader = new WKTReader(geometryFactory);
+      Geometry expectedMultiPolygon =
+          wktReader.read(
+              "MULTIPOLYGON (((-121.92354999630156 37.42834118609436, -121.86222328902491 37.353926450852256, -121.91508032705622 37.2713558667319, -122.02910130918998 37.26319797461824, -122.090428929044 37.33755608435299, -122.03773496427027 37.42012867767779, -121.92354999630156 37.42834118609436)))");
       assertQueryResults(
           queryRunner,
           "SELECT ST_AsText(h3_cells_to_multi_polygon(ARRAY [from_base('85283473fffffff', 16)])) multipolygon",
-          ImmutableList.of(
-              ImmutableList.of(
-                  "MULTIPOLYGON (((-121.92354999630156 37.42834118609436, -121.86222328902491 37.353926450852256, -121.91508032705622 37.2713558667319, -122.02910130918998 37.26319797461824, -122.090428929044 37.33755608435299, -122.03773496427027 37.42012867767779, -121.92354999630156 37.42834118609436)))")));
+          ImmutableList.of(ImmutableList.of(expectedMultiPolygon)));
       assertQueryResults(
           queryRunner,
           "SELECT h3_cells_to_multi_polygon(null) multipolygon",
