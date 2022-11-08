@@ -15,12 +15,16 @@
  */
 package com.foursquare.presto.h3;
 
+import static com.facebook.presto.geospatial.type.GeometryType.GEOMETRY_TYPE_NAME;
+
 import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.type.StandardTypes;
+import com.facebook.presto.geospatial.GeometryType;
 import com.facebook.presto.spi.function.Description;
 import com.facebook.presto.spi.function.ScalarFunction;
 import com.facebook.presto.spi.function.SqlNullable;
 import com.facebook.presto.spi.function.SqlType;
+import io.airlift.slice.Slice;
 
 /** Functions wrapping https://h3geo.org/docs/api/uniedge */
 public final class DirectedEdgeFunctions {
@@ -77,7 +81,7 @@ public final class DirectedEdgeFunctions {
   @ScalarFunction(value = "h3_directed_edge_to_cells")
   @Description("Find the origin and destination cell indexes of a directed edge")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block directedEdgeToCells(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       return H3Plugin.longListToBlock(H3Plugin.h3.directedEdgeToCells(h3));
@@ -89,7 +93,7 @@ public final class DirectedEdgeFunctions {
   @ScalarFunction(value = "h3_origin_to_directed_edges")
   @Description("Find the directed edges from an origin")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block originToDirectedEdges(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       return H3Plugin.longListToBlock(H3Plugin.h3.originToDirectedEdges(h3));
@@ -101,10 +105,11 @@ public final class DirectedEdgeFunctions {
   @ScalarFunction(value = "h3_directed_edge_to_boundary")
   @Description("Find the lat/lng boundary of a directed edge")
   @SqlNullable
-  @SqlType("ARRAY(DOUBLE)")
-  public static Block directedEdgeToBoundary(@SqlType(StandardTypes.BIGINT) long h3) {
+  @SqlType(GEOMETRY_TYPE_NAME)
+  public static Slice directedEdgeToBoundary(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
-      return H3Plugin.latLngListToBlock(H3Plugin.h3.directedEdgeToBoundary(h3));
+      return H3Plugin.latLngListToGeometry(
+          H3Plugin.h3.directedEdgeToBoundary(h3), GeometryType.LINE_STRING);
     } catch (Exception e) {
       return null;
     }

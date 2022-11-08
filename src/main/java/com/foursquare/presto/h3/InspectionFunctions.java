@@ -18,7 +18,7 @@ public final class InspectionFunctions {
   @ScalarFunction(value = "h3_get_resolution")
   @Description("Convert H3 index to resolution (0-15)")
   @SqlNullable
-  @SqlType("INTEGER")
+  @SqlType(StandardTypes.INTEGER)
   public static Long getResolution(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       return Long.valueOf(H3Plugin.h3.getResolution(h3));
@@ -30,7 +30,7 @@ public final class InspectionFunctions {
   @ScalarFunction(value = "h3_get_base_cell_number")
   @Description("Convert H3 index to base cell number (0-122)")
   @SqlNullable
-  @SqlType("INTEGER")
+  @SqlType(StandardTypes.INTEGER)
   public static Long getBaseCellNumber(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       return Long.valueOf(H3Plugin.h3.getBaseCellNumber(h3));
@@ -42,7 +42,7 @@ public final class InspectionFunctions {
   @ScalarFunction(value = "h3_string_to_h3")
   @Description("Convert H3 index string to integer form")
   @SqlNullable
-  @SqlType("BIGINT")
+  @SqlType(StandardTypes.BIGINT)
   public static Long stringToH3(@SqlType(StandardTypes.VARCHAR) Slice h3) {
     try {
       return H3Plugin.h3.stringToH3(h3.toStringUtf8());
@@ -54,7 +54,7 @@ public final class InspectionFunctions {
   @ScalarFunction(value = "h3_h3_to_string")
   @Description("Convert H3 index integer to string form")
   @SqlNullable
-  @SqlType("VARCHAR")
+  @SqlType(StandardTypes.VARCHAR)
   public static Slice h3ToString(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       return Slices.utf8Slice(H3Plugin.h3.h3ToString(h3));
@@ -65,21 +65,21 @@ public final class InspectionFunctions {
 
   @ScalarFunction(value = "h3_is_valid_cell")
   @Description("Returns true if given a valid H3 cell identifier")
-  @SqlType("BOOLEAN")
+  @SqlType(StandardTypes.BOOLEAN)
   public static boolean isValidCell(@SqlType(StandardTypes.BIGINT) long h3) {
     return H3Plugin.h3.isValidCell(h3);
   }
 
   @ScalarFunction(value = "h3_is_res_class_iii")
   @Description("Returns true if the index is in resolution class III")
-  @SqlType("BOOLEAN")
+  @SqlType(StandardTypes.BOOLEAN)
   public static boolean isResClassIII(@SqlType(StandardTypes.BIGINT) long h3) {
     return H3Plugin.h3.isResClassIII(h3);
   }
 
   @ScalarFunction(value = "h3_is_pentagon")
   @Description("Returns true if the cell index is a pentagon")
-  @SqlType("BOOLEAN")
+  @SqlType(StandardTypes.BOOLEAN)
   public static boolean isPentagon(@SqlType(StandardTypes.BIGINT) long h3) {
     return H3Plugin.h3.isPentagon(h3);
   }
@@ -87,7 +87,7 @@ public final class InspectionFunctions {
   @ScalarFunction(value = "h3_get_icosahedron_faces")
   @Description("Convert H3 index to icosahedron face IDs")
   @SqlNullable
-  @SqlType("ARRAY(INTEGER)")
+  @SqlType(H3Plugin.TYPE_ARRAY_INTEGER)
   public static Block getIcosahedronFaces(@SqlType(StandardTypes.BIGINT) long h3) {
     try {
       Collection<Integer> faces = H3Plugin.h3.getIcosahedronFaces(h3);

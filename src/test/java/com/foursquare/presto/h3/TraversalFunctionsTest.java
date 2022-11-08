@@ -37,25 +37,25 @@ public class TraversalFunctionsTest {
               ImmutableList.of(
                   ImmutableList.of(0x85283473fffffffL),
                   ImmutableList.of(
-                      599686042433355775L,
-                      599686030622195711L,
-                      599686044580839423L,
-                      599686038138388479L,
-                      599686043507097599L,
-                      599686015589810175L,
-                      599686014516068351L,
-                      599686034917163007L,
-                      599686029548453887L,
-                      599686032769679359L,
-                      599686198125920255L,
-                      599686040285872127L,
-                      599686041359613951L,
-                      599686039212130303L,
-                      599686023106002943L,
-                      599686027400970239L,
-                      599686013442326527L,
-                      599686012368584703L,
-                      599686018811035647L))));
+                      0x85283473fffffffL,
+                      0x85283447fffffffL,
+                      0x8528347bfffffffL,
+                      0x85283463fffffffL,
+                      0x85283477fffffffL,
+                      0x8528340ffffffffL,
+                      0x8528340bfffffffL,
+                      0x85283457fffffffL,
+                      0x85283443fffffffL,
+                      0x8528344ffffffffL,
+                      0x852836b7fffffffL,
+                      0x8528346bfffffffL,
+                      0x8528346ffffffffL,
+                      0x85283467fffffffL,
+                      0x8528342bfffffffL,
+                      0x8528343bfffffffL,
+                      0x85283407fffffffL,
+                      0x85283403fffffffL,
+                      0x8528341bfffffffL))));
 
       assertQueryResults(
           queryRunner,
@@ -86,25 +86,25 @@ public class TraversalFunctionsTest {
               ImmutableList.of(
                   ImmutableList.of(0x85283473fffffffL),
                   ImmutableList.of(
-                      599686042433355775L,
-                      599686030622195711L,
-                      599686044580839423L,
-                      599686038138388479L,
-                      599686043507097599L,
-                      599686015589810175L,
-                      599686014516068351L,
-                      599686034917163007L,
-                      599686029548453887L,
-                      599686032769679359L,
-                      599686198125920255L,
-                      599686040285872127L,
-                      599686041359613951L,
-                      599686039212130303L,
-                      599686023106002943L,
-                      599686027400970239L,
-                      599686013442326527L,
-                      599686012368584703L,
-                      599686018811035647L))));
+                      0x85283473fffffffL,
+                      0x85283447fffffffL,
+                      0x8528347bfffffffL,
+                      0x85283463fffffffL,
+                      0x85283477fffffffL,
+                      0x8528340ffffffffL,
+                      0x8528340bfffffffL,
+                      0x85283457fffffffL,
+                      0x85283443fffffffL,
+                      0x8528344ffffffffL,
+                      0x852836b7fffffffL,
+                      0x8528346bfffffffL,
+                      0x8528346ffffffffL,
+                      0x85283467fffffffL,
+                      0x8528342bfffffffL,
+                      0x8528343bfffffffL,
+                      0x85283407fffffffL,
+                      0x85283403fffffffL,
+                      0x8528341bfffffffL))));
       // Pentagon:
       assertQueryResults(
           queryRunner,
@@ -140,18 +140,18 @@ public class TraversalFunctionsTest {
               ImmutableList.of(
                   ImmutableList.of(0x85283473fffffffL),
                   ImmutableList.of(
-                      599686018811035647L,
-                      599686034917163007L,
-                      599686029548453887L,
-                      599686032769679359L,
-                      599686198125920255L,
-                      599686040285872127L,
-                      599686041359613951L,
-                      599686039212130303L,
-                      599686023106002943L,
-                      599686027400970239L,
-                      599686013442326527L,
-                      599686012368584703L))));
+                      0x8528341bfffffffL,
+                      0x85283457fffffffL,
+                      0x85283443fffffffL,
+                      0x8528344ffffffffL,
+                      0x852836b7fffffffL,
+                      0x8528346bfffffffL,
+                      0x8528346ffffffffL,
+                      0x85283467fffffffL,
+                      0x8528342bfffffffL,
+                      0x8528343bfffffffL,
+                      0x85283407fffffffL,
+                      0x85283403fffffffL))));
       // Pentagon:
       assertQueryResults(
           queryRunner,
@@ -270,7 +270,7 @@ public class TraversalFunctionsTest {
       assertQueryResults(
           queryRunner,
           "SELECT h3_local_ij_to_cell(from_base('85283473fffffff', 16), 0, 0) hex",
-          ImmutableList.of(ImmutableList.of(599682438955794431L)));
+          ImmutableList.of(ImmutableList.of(0x85280003fffffffL)));
 
       assertQueryResults(
           queryRunner,

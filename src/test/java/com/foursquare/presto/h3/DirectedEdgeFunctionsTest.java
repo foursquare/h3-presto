@@ -185,14 +185,10 @@ public class DirectedEdgeFunctionsTest {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
           queryRunner,
-          "SELECT h3_directed_edge_to_boundary(h3_cells_to_directed_edge(from_base('85283473fffffff', 16), from_base('8528347bfffffff', 16)))",
+          "SELECT ST_AsText(h3_directed_edge_to_boundary(h3_cells_to_directed_edge(from_base('85283473fffffff', 16), from_base('8528347bfffffff', 16))))",
           ImmutableList.of(
               ImmutableList.of(
-                  ImmutableList.of(
-                      37.353926450852256,
-                      -121.86222328902491,
-                      37.42834118609436,
-                      -121.92354999630156))));
+                  "LINESTRING (-121.86222328902491 37.353926450852256, -121.92354999630156 37.42834118609436)")));
 
       assertQueryResults(
           queryRunner,

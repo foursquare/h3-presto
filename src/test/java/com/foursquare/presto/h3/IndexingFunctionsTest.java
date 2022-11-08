@@ -9,6 +9,10 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class IndexingFunctionsTest {
@@ -18,7 +22,11 @@ public class IndexingFunctionsTest {
       assertQueryResults(
           queryRunner,
           "SELECT h3_latlng_to_cell(0,0,0) hex",
-          ImmutableList.of(ImmutableList.of(578536630256664575L)));
+          ImmutableList.of(ImmutableList.of(0x8075fffffffffffL)));
+      assertQueryResults(
+          queryRunner,
+          "SELECT h3_latlng_to_cell(ST_GeometryFromText('POINT (0 10)'), 0) hex",
+          ImmutableList.of(ImmutableList.of(0x8059fffffffffffL)));
 
       assertQueryResults(
           queryRunner,
@@ -40,13 +48,15 @@ public class IndexingFunctionsTest {
   }
 
   @Test
-  public void testCellToLatLng() {
+  public void testCellToLatLng() throws ParseException {
     try (QueryRunner queryRunner = createQueryRunner()) {
+      GeometryFactory geometryFactory = new GeometryFactory();
+      WKTReader wktReader = new WKTReader(geometryFactory);
+      Geometry expectedPoint = wktReader.read("POINT (-5.245390296777327 2.300882111626747)");
       assertQueryResults(
           queryRunner,
-          "SELECT h3_cell_to_latlng(578536630256664575)",
-          ImmutableList.of(
-              ImmutableList.of(ImmutableList.of(2.300882111626747, -5.245390296777327))));
+          "SELECT ST_AsText(h3_cell_to_latlng(from_base('8075fffffffffff', 16)))",
+          ImmutableList.of(ImmutableList.of(expectedPoint)));
 
       assertQueryResults(
           queryRunner,
@@ -60,24 +70,17 @@ public class IndexingFunctionsTest {
   }
 
   @Test
-  public void testCellToBoundary() {
+  public void testCellToBoundary() throws ParseException {
     try (QueryRunner queryRunner = createQueryRunner()) {
+      GeometryFactory geometryFactory = new GeometryFactory();
+      WKTReader wktReader = new WKTReader(geometryFactory);
+      Geometry expectedPolygon =
+          wktReader.read(
+              "POLYGON ((-4.013998443470464 11.545295975414755, 3.9430361557864506 3.968796976609579, -0.7828391751055211 -5.889921754313907, -11.66474754212643 -4.467031609784516, -13.708146703917999 6.270965136275774, -4.013998443470464 11.545295975414755))");
       assertQueryResults(
           queryRunner,
-          "SELECT h3_cell_to_boundary(578536630256664575)",
-          ImmutableList.of(
-              ImmutableList.of(
-                  ImmutableList.of(
-                      11.545295975414755,
-                      -4.013998443470464,
-                      6.270965136275774,
-                      -13.708146703917999,
-                      -4.467031609784516,
-                      -11.66474754212643,
-                      -5.889921754313907,
-                      -0.7828391751055211,
-                      3.968796976609579,
-                      3.9430361557864506))));
+          "SELECT ST_AsText(h3_cell_to_boundary(from_base('8075fffffffffff', 16)))",
+          ImmutableList.of(ImmutableList.of(expectedPolygon)));
 
       assertQueryResults(
           queryRunner,

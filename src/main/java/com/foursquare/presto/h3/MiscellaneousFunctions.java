@@ -101,20 +101,15 @@ public final class MiscellaneousFunctions {
 
   @ScalarFunction(value = "h3_get_res0_cells")
   @Description("Get all resolution 0 cells")
-  @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block getRes0Cells() {
-    try {
-      return H3Plugin.longListToBlock(new ArrayList<>(H3Plugin.h3.getRes0Cells()));
-    } catch (Exception e) {
-      return null;
-    }
+    return H3Plugin.longListToBlock(new ArrayList<>(H3Plugin.h3.getRes0Cells()));
   }
 
   @ScalarFunction(value = "h3_get_pentagons")
   @Description("Get all pentagon cells at a resolution")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block getPentagons(@SqlType(StandardTypes.INTEGER) long res) {
     try {
       return H3Plugin.longListToBlock(

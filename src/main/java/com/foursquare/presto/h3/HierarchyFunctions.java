@@ -41,7 +41,7 @@ public final class HierarchyFunctions {
   @ScalarFunction(value = "h3_cell_to_children")
   @Description("Find children of an H3 index at given resolution")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block cellToChildren(
       @SqlType(StandardTypes.BIGINT) long cell, @SqlType(StandardTypes.INTEGER) long res) {
     try {
@@ -68,8 +68,8 @@ public final class HierarchyFunctions {
   @ScalarFunction(value = "h3_compact_cells")
   @Description("Compact indexes to coarser resolutions")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
-  public static Block compactCells(@SqlType("ARRAY(BIGINT)") Block cellsBlock) {
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
+  public static Block compactCells(@SqlType(H3Plugin.TYPE_ARRAY_BIGINT) Block cellsBlock) {
     try {
       List<Long> cells = H3Plugin.longBlockToList(cellsBlock);
       List<Long> compacted = H3Plugin.h3.compactCells(cells);
@@ -82,9 +82,10 @@ public final class HierarchyFunctions {
   @ScalarFunction(value = "h3_uncompact_cells")
   @Description("Uncompact indexes to finer resolutions")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block uncompactCells(
-      @SqlType("ARRAY(BIGINT)") Block cellsBlock, @SqlType(StandardTypes.INTEGER) long res) {
+      @SqlType(H3Plugin.TYPE_ARRAY_BIGINT) Block cellsBlock,
+      @SqlType(StandardTypes.INTEGER) long res) {
     try {
       List<Long> cells = H3Plugin.longBlockToList(cellsBlock);
       List<Long> uncompacted = H3Plugin.h3.uncompactCells(cells, H3Plugin.longToInt(res));

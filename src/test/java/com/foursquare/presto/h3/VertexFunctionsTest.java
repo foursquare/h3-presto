@@ -24,6 +24,10 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class VertexFunctionsTest {
@@ -98,19 +102,21 @@ public class VertexFunctionsTest {
   }
 
   @Test
-  public void testVertexToLatLng() {
+  public void testVertexToLatLng() throws ParseException {
     try (QueryRunner queryRunner = createQueryRunner()) {
+      GeometryFactory geometryFactory = new GeometryFactory();
+      WKTReader wktReader = new WKTReader(geometryFactory);
+      Geometry expectedPoint = wktReader.read("POINT (-122.03773496427027 37.42012867767779)");
       assertQueryResults(
           queryRunner,
-          "SELECT h3_vertex_to_latlng(from_base('255283463fffffff', 16))",
-          ImmutableList.of(
-              ImmutableList.of(ImmutableList.of(37.42012867767778, -122.03773496427027))));
+          "SELECT ST_AsText(h3_vertex_to_latlng(from_base('255283463fffffff', 16)))",
+          ImmutableList.of(ImmutableList.of(expectedPoint)));
 
+      Geometry expectedPoint2 = wktReader.read("POINT (31.831280499087402 68.92995788193981)");
       assertQueryResults(
           queryRunner,
-          "SELECT h3_vertex_to_latlng(0)",
-          ImmutableList.of(
-              ImmutableList.of(ImmutableList.of(68.92995788193981, 31.831280499087402))));
+          "SELECT ST_AsText(h3_vertex_to_latlng(0))",
+          ImmutableList.of(ImmutableList.of(expectedPoint2)));
       assertQueryResults(
           queryRunner,
           "SELECT h3_vertex_to_latlng(null)",

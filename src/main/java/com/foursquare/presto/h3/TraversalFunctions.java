@@ -31,7 +31,7 @@ public final class TraversalFunctions {
   @ScalarFunction(value = "h3_grid_disk")
   @Description("Finds all nearby cells in a disk around the origin")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridDisk(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
@@ -48,7 +48,7 @@ public final class TraversalFunctions {
   @Description(
       "Efficiently finds all nearby cells in a disk around the origin, but will return null if a pentagon is encountered")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridDiskUnsafe(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
@@ -69,7 +69,7 @@ public final class TraversalFunctions {
   @Description(
       "Efficiently finds nearby cells in a ring of distance k around the origin, but will return null if a pentagon is encountered")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridRingUnsafe(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.INTEGER) long k) {
     try {
@@ -83,7 +83,7 @@ public final class TraversalFunctions {
   @ScalarFunction(value = "h3_grid_path_cells")
   @Description("Finds cells comprising a path between origin and destination, in order")
   @SqlNullable
-  @SqlType("ARRAY(BIGINT)")
+  @SqlType(H3Plugin.TYPE_ARRAY_BIGINT)
   public static Block gridPathCells(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.BIGINT) long destination) {
     try {
@@ -110,7 +110,7 @@ public final class TraversalFunctions {
   @ScalarFunction(value = "h3_cell_to_local_ij")
   @Description("Finds local IJ coordinates for a cell")
   @SqlNullable
-  @SqlType("ARRAY(INTEGER)")
+  @SqlType(H3Plugin.TYPE_ARRAY_INTEGER)
   public static Block cellToLocalIj(
       @SqlType(StandardTypes.BIGINT) long origin, @SqlType(StandardTypes.BIGINT) long cell) {
     try {
