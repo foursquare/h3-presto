@@ -67,7 +67,8 @@
 
   <properties>
     <java.version>8</java.version>
-    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -144,6 +145,9 @@
         <activation>
             <jdk>[1.9</jdk>
         </activation>
+        <properties>
+          <maven.compiler.release>${java.version}</maven.compiler.release>
+        </properties>
         <build>
             <plugins>
                 <plugin>
@@ -166,26 +170,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>enforce</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <phase>validate</phase>
-            <configuration>
-              <rules>
-                <requireJavaVersion>
-                  <version>${java.version}</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
