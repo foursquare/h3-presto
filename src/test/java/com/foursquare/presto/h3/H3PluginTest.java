@@ -18,6 +18,7 @@ package com.foursquare.presto.h3;
 import static com.facebook.presto.testing.TestingSession.testSessionBuilder;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.facebook.presto.Session;
 import com.facebook.presto.testing.MaterializedResult;
@@ -30,6 +31,10 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class H3PluginTest {
@@ -74,6 +79,19 @@ public class H3PluginTest {
           ((Double) actualVal).doubleValue(),
           EPSILON,
           String.format("%s: value matches within epsilon", message));
+    } else if (expectedVal instanceof Geometry && actualVal instanceof String) {
+      try {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        WKTReader wktReader = new WKTReader(geometryFactory);
+        Geometry actualGeometry = wktReader.read((String) actualVal);
+        assertTrue(
+            ((Geometry) expectedVal).equalsExact(actualGeometry, EPSILON),
+            String.format(
+                "%s: value matches within epsilon (expected: %s actual: %s)",
+                message, expectedVal, actualGeometry));
+      } catch (ParseException e) {
+        throw new RuntimeException(e);
+      }
     } else if (expectedVal instanceof List && actualVal instanceof List) {
       List<?> expectedValList = (List<?>) expectedVal;
       List<?> actualValList = (List<?>) actualVal;
@@ -98,11 +116,7 @@ public class H3PluginTest {
 
   public static DistributedQueryRunner createQueryRunner() {
     try {
-      Session session =
-          testSessionBuilder()
-              // .setCatalog("test_catalog")
-              // .setSchema("tiny")
-              .build();
+      Session session = testSessionBuilder().build();
       Map<String, String> properties = ImmutableMap.of();
       DistributedQueryRunner queryRunner =
           DistributedQueryRunner.builder(session)
@@ -112,7 +126,6 @@ public class H3PluginTest {
 
       try {
         queryRunner.installPlugin(new H3Plugin());
-        // queryRunner.createCatalog("test_catalog", "test_catalog");
         return queryRunner;
       } catch (Exception e) {
         queryRunner.close();
