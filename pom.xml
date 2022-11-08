@@ -66,7 +66,7 @@
   </distributionManagement>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>8</java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -139,6 +139,31 @@
 
   </dependencies>
 
+  <profiles>
+    <profile>
+        <activation>
+            <jdk>[1.9</jdk>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify.fmt</groupId>
+                    <artifactId>fmt-maven-plugin</artifactId>
+                    <version>2.19</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>format</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -180,19 +205,6 @@
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.spotify.fmt</groupId>
-        <artifactId>fmt-maven-plugin</artifactId>
-        <version>2.16</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>format</goal>
             </goals>
           </execution>
         </executions>
