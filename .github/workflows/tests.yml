@@ -74,10 +74,8 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Coverage report
-        # To report to coveralls, replace with:
-        # mvn clean test jacoco:report coveralls:report --no-transfer-progress -DrepoToken=$COVERALLS_SECRET -DpullRequest=${{ github.event.number }}
-        # env:
-        #   CI_NAME: github
-        #   COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          CI_NAME: github
+          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn clean test jacoco:report --no-transfer-progress
+          mvn clean test jacoco:report coveralls:report --no-transfer-progress -DrepoToken=$COVERALLS_SECRET -DpullRequest=${{ github.event.number }}
