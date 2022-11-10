@@ -53,7 +53,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [11]
+        # On 8 due to https://github.com/trautonen/coveralls-maven-plugin/issues/141
+        java-version: [8]
 
     steps:
       - uses: actions/checkout@v2.1.1
@@ -74,10 +75,8 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Coverage report
-        # To report to coveralls, replace with:
-        # mvn clean test jacoco:report coveralls:report --no-transfer-progress -DrepoToken=$COVERALLS_SECRET -DpullRequest=${{ github.event.number }}
-        # env:
-        #   CI_NAME: github
-        #   COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          CI_NAME: github
+          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn clean test jacoco:report --no-transfer-progress
+          mvn clean test jacoco:report coveralls:report --no-transfer-progress -DrepoToken=$COVERALLS_SECRET -DpullRequest=${{ github.event.number }}
