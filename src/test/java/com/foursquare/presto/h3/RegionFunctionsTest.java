@@ -54,6 +54,10 @@ public class RegionFunctionsTest {
 
       assertQueryResults(
           queryRunner,
+          "SELECT h3_polygon_to_cells(ST_GeometryFromText('POINT (40 4)'), 4) hex",
+          ImmutableList.of(Collections.singletonList(null)));
+      assertQueryResults(
+          queryRunner,
           "SELECT h3_polygon_to_cells(null, 4) hex",
           ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(

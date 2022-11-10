@@ -125,6 +125,10 @@ public class VertexFunctionsTest {
           ImmutableList.of(ImmutableList.of(expectedPoint2)));
       assertQueryResults(
           queryRunner,
+          "SELECT ST_AsText(h3_vertex_to_latlng(-1))",
+          ImmutableList.of(Collections.singletonList(null)));
+      assertQueryResults(
+          queryRunner,
           "SELECT h3_vertex_to_latlng(null)",
           ImmutableList.of(Collections.singletonList(null)));
     }

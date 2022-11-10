@@ -280,6 +280,10 @@ public class TraversalFunctionsTest {
 
       assertQueryResults(
           queryRunner,
+          "SELECT h3_local_ij_to_cell(from_base('85283473fffffff', 16), 1000000000, 0) hex",
+          ImmutableList.of(Collections.singletonList(null)));
+      assertQueryResults(
+          queryRunner,
           "SELECT h3_local_ij_to_cell(null, 0, 0) hex",
           ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(
