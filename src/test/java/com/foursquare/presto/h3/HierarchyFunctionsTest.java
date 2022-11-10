@@ -17,6 +17,7 @@ package com.foursquare.presto.h3;
 
 import static com.foursquare.presto.h3.H3PluginTest.assertQueryResults;
 import static com.foursquare.presto.h3.H3PluginTest.createQueryRunner;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.facebook.presto.testing.QueryRunner;
 import com.google.common.collect.ImmutableList;
@@ -27,6 +28,11 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class HierarchyFunctionsTest {
+  @Test
+  public void testConstructor() {
+    assertNotNull(new HierarchyFunctions());
+  }
+
   @Test
   public void testCellToParent() {
     try (QueryRunner queryRunner = createQueryRunner()) {
@@ -125,6 +131,10 @@ public class HierarchyFunctionsTest {
           "SELECT h3_compact_cells(h3_cell_to_children(from_base('85283473fffffff', 16), 7)) hex",
           ImmutableList.of(ImmutableList.of(ImmutableList.of(0x85283473fffffffL))));
 
+      assertQueryResults(
+          queryRunner,
+          "SELECT h3_compact_cells(repeat(from_base('85283473fffffff', 16), 100)) hex",
+          ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(
           queryRunner,
           "SELECT h3_compact_cells(ARRAY []) hex",

@@ -18,6 +18,7 @@ package com.foursquare.presto.h3;
 import static com.facebook.presto.testing.TestingSession.testSessionBuilder;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.facebook.presto.Session;
@@ -39,6 +40,11 @@ import org.locationtech.jts.io.WKTReader;
 @TestInstance(Lifecycle.PER_CLASS)
 public class H3PluginTest {
   public static final double EPSILON = 1e-6;
+
+  @Test
+  public void testConstructor() {
+    assertNotNull(new H3Plugin());
+  }
 
   @Test
   public void TestH3Plugin() {
