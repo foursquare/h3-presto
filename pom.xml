@@ -41,7 +41,7 @@
   <scm>
     <connection>scm:git:git://github.com/foursquare/h3-presto.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/foursquare/h3-presto.git</developerConnection>
-    <url>http://github.com/foursquare/h3-presto/tree/master</url>
+    <url>http://github.com/foursquare/h3-presto/tree/main</url>
     <tag>HEAD</tag>
   </scm>
 
