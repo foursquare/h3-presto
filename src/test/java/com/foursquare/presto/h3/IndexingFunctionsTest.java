@@ -2,6 +2,7 @@ package com.foursquare.presto.h3;
 
 import static com.foursquare.presto.h3.H3PluginTest.assertQueryResults;
 import static com.foursquare.presto.h3.H3PluginTest.createQueryRunner;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.facebook.presto.testing.QueryRunner;
 import com.google.common.collect.ImmutableList;
@@ -17,6 +18,11 @@ import org.locationtech.jts.io.WKTReader;
 @TestInstance(Lifecycle.PER_CLASS)
 public class IndexingFunctionsTest {
   @Test
+  public void testConstructor() {
+    assertNotNull(new IndexingFunctions());
+  }
+
+  @Test
   public void testLatLngToCell() {
     try (QueryRunner queryRunner = createQueryRunner()) {
       assertQueryResults(
@@ -28,6 +34,10 @@ public class IndexingFunctionsTest {
           "SELECT h3_latlng_to_cell(ST_GeometryFromText('POINT (0 10)'), 0) hex",
           ImmutableList.of(ImmutableList.of(0x8059fffffffffffL)));
 
+      assertQueryResults(
+          queryRunner,
+          "SELECT h3_latlng_to_cell(ST_GeometryFromText('LINESTRING (0 0, 10 0, 0 10)'), 0) hex",
+          ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(
           queryRunner,
           "SELECT h3_latlng_to_cell(null, 0, 4) hex",

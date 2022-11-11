@@ -17,6 +17,7 @@ package com.foursquare.presto.h3;
 
 import static com.foursquare.presto.h3.H3PluginTest.assertQueryResults;
 import static com.foursquare.presto.h3.H3PluginTest.createQueryRunner;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.facebook.presto.testing.QueryRunner;
 import com.google.common.collect.ImmutableList;
@@ -31,6 +32,11 @@ import org.locationtech.jts.io.WKTReader;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class VertexFunctionsTest {
+  @Test
+  public void testConstructor() {
+    assertNotNull(new VertexFunctions());
+  }
+
   @Test
   public void testCellToVertex() {
     try (QueryRunner queryRunner = createQueryRunner()) {
@@ -117,6 +123,10 @@ public class VertexFunctionsTest {
           queryRunner,
           "SELECT ST_AsText(h3_vertex_to_latlng(0))",
           ImmutableList.of(ImmutableList.of(expectedPoint2)));
+      assertQueryResults(
+          queryRunner,
+          "SELECT ST_AsText(h3_vertex_to_latlng(-1))",
+          ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(
           queryRunner,
           "SELECT h3_vertex_to_latlng(null)",

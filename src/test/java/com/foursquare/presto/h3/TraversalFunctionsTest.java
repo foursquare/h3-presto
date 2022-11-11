@@ -17,6 +17,7 @@ package com.foursquare.presto.h3;
 
 import static com.foursquare.presto.h3.H3PluginTest.assertQueryResults;
 import static com.foursquare.presto.h3.H3PluginTest.createQueryRunner;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.facebook.presto.testing.QueryRunner;
 import com.google.common.collect.ImmutableList;
@@ -27,6 +28,11 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class TraversalFunctionsTest {
+  @Test
+  public void testConstructor() {
+    assertNotNull(new TraversalFunctions());
+  }
+
   @Test
   public void testGridDisk() {
     try (QueryRunner queryRunner = createQueryRunner()) {
@@ -272,6 +278,10 @@ public class TraversalFunctionsTest {
           "SELECT h3_local_ij_to_cell(from_base('85283473fffffff', 16), 0, 0) hex",
           ImmutableList.of(ImmutableList.of(0x85280003fffffffL)));
 
+      assertQueryResults(
+          queryRunner,
+          "SELECT h3_local_ij_to_cell(from_base('85283473fffffff', 16), 1000000000, 0) hex",
+          ImmutableList.of(Collections.singletonList(null)));
       assertQueryResults(
           queryRunner,
           "SELECT h3_local_ij_to_cell(null, 0, 0) hex",
