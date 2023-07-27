@@ -78,7 +78,7 @@
     <assertj.version>3.22.0</assertj.version>
     <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
     <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version>
-    <guava.version>31.1-jre</guava.version>
+    <guava.version>32.0.0-jre</guava.version>
   </properties>
 
   <dependencies>
