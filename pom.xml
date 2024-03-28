@@ -89,6 +89,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.locationtech.jts</groupId>
+      <artifactId>jts-core</artifactId>
+      <version>1.17.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>${guava.version}</version>
@@ -182,6 +188,15 @@
         <version>${maven-shade-plugin.version}</version>
         <configuration>
           <createDependencyReducedPom>false</createDependencyReducedPom>
+          <relocations>
+            <relocation>
+              <pattern>org.locationtech.jts</pattern>
+              <shadedPattern>com.foursquare.h3.shaded_relocated.org.locationtech.jts</shadedPattern>
+              <includes>
+                <include>org.locationtech.jts.**</include>
+              </includes>
+            </relocation>
+          </relocations>
         </configuration>
         <executions>
           <execution>
